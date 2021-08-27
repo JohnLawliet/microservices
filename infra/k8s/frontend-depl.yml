@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-depl
+spec:
+  selector:
+    matchLabels:
+      app:  frontend
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  frontend
+    spec:
+      containers:
+        - name: frontend
+          image:  johnlawliet/frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-serv
+spec:
+  selector:
+    app:  frontend
+  ports:
+    - name: frontend
+      port: 3000
+      targetPort: 3000
+      protocol: TCP

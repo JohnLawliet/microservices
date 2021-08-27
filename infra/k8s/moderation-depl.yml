@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: moderation-depl
+spec:
+  selector:
+    matchLabels:
+      app:  moderation
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  moderation
+    spec:
+      containers:
+        - name: moderation
+          image:  johnlawliet/moderation
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: moderation-int-serv
+spec:
+  selector:
+    app:  moderation
+  ports:
+    - name: moderation
+      port: 4300
+      targetPort: 4300
+      protocol: TCP

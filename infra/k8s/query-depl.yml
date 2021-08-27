@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: query-depl
+spec:
+  selector:
+    matchLabels:
+      app:  query
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  query
+    spec:
+      containers:
+        - name: query
+          image:  johnlawliet/query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: query-serv
+spec:
+  selector:
+    app:  query
+  ports:
+    - name: query
+      port: 4200
+      targetPort: 4200
+      protocol: TCP

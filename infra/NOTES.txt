@@ -1,0 +1,54 @@
+NOTE: THIS IS AN EXTENSION OF KUBERNETES NOTES IN DOCKER KUBERNETES FOLDER
+
+-   All services, deployment, pods are called kubernetes objects
+-   Structure of kubernetes:
+    -   Cluster
+        -   master node
+        -   deployment
+        -   worker node
+            -   pods
+            -   service
+
+-   Deployment:
+    -   It is the manager of pods as it watches the health of pods and creates new pods if a pod is being faulty
+-   Service:
+    -   Types:
+        -   ClusterIP:
+            -   for internal cluster communication
+        -   NodePort:
+            -   for exposing the pod to external
+            -   used for dev purpose as loadbalancer requires additional config
+            -   not good for production as the ports of the nodes has to be memorized. Any change
+                in port needs to get reflected on the frontend also
+        -   LoadBalancer:
+            -   provides a single point of entry to the frontend to reach the backend pods
+            -   used for prod environment
+            -   Unlike other objects, loadbalancer service resides outside of the cluster, provisioned by the 
+                cloud platform(aws, gc, azure).
+            -   works alongside ingress controller which is responsible for internal routing to different pods
+        -   ExternalName:
+            -   redirects an in-cluster url to CNAME url
+            -   used only in some corner cases. So, not much
+    -   port config:
+        -   includes port: xxxx and targetPort: xxxx 
+        -   targetPort = port of pod within the node
+        -   port = port of worker node. 
+        -   Generally port and targetPort are kept the same
+        -   Traffic that hits the node port gets redirected to its pods depending on the pod's target port
+        -   NodePort is the port that is exposed to external environment i.e outside the cluster to communicate with the worker node.
+            Nodeport is different from the above port and targetPort. Generally from 30000 - 32000
+
+-   ingress:
+    -   contains the ingress container which has the ruleset to direct traffic to required pods
+    -   used in conjunction with loadbalancer
+    -   annotations: kubernetes.io/ingress.class: nginx is a must to tell ingress that the file will be a config file for loadbalancer
+    -   host: posts.com 
+        -   is a necessity to trick the machine to route to localhost/minikube ip instead of going to actual posts.com on internet
+        -   for windows, open cmd as admin => cd to sys32/drivers/etc => code host => add a line "<localhost/minikube ip> posts.com"
+        -   it is only meant for dev purpose
+    -   NOTE: ingress can't read req methods like GET,POST, etc so /posts for different methods can't be differentiated
+    -   NOTE: ingress doesn't read wildcards like :id in route. Use regex ?(.*) instead. 
+        -   To allow nginx to use regex set nginx.ingress.kubernetes.io/use-regex:  'true' under annotations
+    -   For simple react apps like those which do not use react router, just "path: /" will do. However, for apps with reaect router,
+        use regex to set "path: ?/(.*)"
+    -   The react path is set at the end as paths are read from top to bottom. Like saying if no path is found, redirect to react path 

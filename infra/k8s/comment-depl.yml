@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comments-depl
+spec:
+  selector:
+    matchLabels:
+      app:  comments
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  comments
+    spec:
+      containers:
+        - name: comments
+          image:  johnlawliet/comments
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: comments-serv
+spec:
+  selector:
+    app:  comments
+  ports:
+    - name: comments
+      port: 4100
+      targetPort: 4100
+      protocol: TCP

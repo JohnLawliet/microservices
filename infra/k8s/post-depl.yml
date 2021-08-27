@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-depl
+spec:
+  selector:
+    matchLabels:
+      app:  posts
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app:  posts
+    spec:      
+      containers:
+        - name: posts
+          image:  johnlawliet/posts
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-int-serv
+spec:
+  type: ClusterIP
+  selector:
+    app:  posts
+  ports:
+    - name: posts
+      port: 4000
+      targetPort: 4000
+      protocol: TCP
